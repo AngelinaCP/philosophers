@@ -1,33 +1,67 @@
 #include "philo.h"
 
-pthread_mutex_t pfork;
 int fork2 = 2;
-int philo_eating = 0;
 
-t_list *philo_init(char **argv)
+void	list_init(t_all *all)
 {
-	t_list *philo;
+	int	i;
 
-	philo = malloc(sizeof(t_list));
-	philo->philo_count = 0;
-	philo->philo_num = ft_atoi(argv[1]);
-	philo->time_to_die = ft_atoi(argv[2]);
-	philo->eating = ft_atoi(argv[3]);
-	philo->sleeping = ft_atoi(argv[4]);
-	if (argv[5])
-		philo->num_to_eat = ft_atoi(argv[5]);
-	return (philo);
+	i = 0;
+	while (i < all->philo_num)
+	{
+		all->philos[i].ID = i + 1;
+		i++;
+	}
 }
 
-int eating(t_list philo, int sec)
+void	mutex_init(t_all *all)
 {
-	pthread_mutex_lock(&pfork);
-	philo_eating++;
+	int i;
+
+	i = 0;
+	pthread_mutex_init(&all->message, NULL);
+	pthread_mutex_init(&all->sleep, NULL);
+	pthread_mutex_init(&all->death, NULL);
+//	all->pfork = malloc(sizeof(pthread_mutex_t *) * all->philo_num);
+
+//	while (i < all->philo_num)
+//	{
+//		pthread_mutex_init(&all->philos->pfork, NULL);
+//		i++;
+//	}
+}
+
+t_all *philo_init(char **argv)
+{
+	t_all *all;
+
+	all = malloc(sizeof(t_all));
+	all->philo_num = ft_atoi(argv[1]);
+	all->time_to_die = ft_atoi(argv[2]);
+	all->time_to_eat = ft_atoi(argv[3]);
+	all->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5])
+		all->num_to_eat = ft_atoi(argv[5]);
+	else
+		all->num_to_eat = 0;
+	all->philos = malloc(sizeof(t_list *) * all->philo_num);
+	if (!all->philos)
+		exit (1);
+	list_init(all);
+	mutex_init(all);
+	return (all);
+}
+
+int eating(t_all *philo, int sec)
+{
+	(void)philo;
+	pthread_mutex_lock(philo->pfork);
 	fork2 -= 2;
-	printf("%d philo %d is eating\n", sec,* philo.philo_count);
+
+//	printf("%d philo %d is eating\n", sec, philo.philos->ID);
 	fork2 += 2;
 	usleep(100000);
-	pthread_mutex_unlock(&pfork);
+	//pthread_mutex_unlock(philo.pfork);
 	return (sec);
 }
 
@@ -41,28 +75,28 @@ void thinking(int i)
 	printf("Philo %d is thinking\n", i);
 }
 
-void	*doing(void *arg)
+void	*life(void *arg)
 {
 	int	i;
+	(void)arg;
 	struct timeval current_time;
-	t_list philo = *(t_list *)arg;
-
+	t_all philo = *(t_all *)arg;
 	i = 0;
 	gettimeofday(&current_time, NULL);
-	printf("philo_count %d\n", *philo.philo_count);
-	while (i < philo.num_to_eat)
-	{
+//	printf("philo_count %d\n", *philo.philo_count);
+//	while (i < philo.num_to_eat)
+//	{
 		eating(philo, current_time.tv_usec);
-		i++;
-	}
+//		i++;
+//	}
 	return (NULL);
 }
 
 int main(int argc, char **argv)
 {
 	int	i;
-	t_list *philo;
-
+	t_all *philo;
+	void *philo_v;
 	i = 0;
 	if (argc < 5)
 	{
@@ -71,21 +105,18 @@ int main(int argc, char **argv)
 	}
 	philo = philo_init(argv);
 	pthread_t th[philo->philo_num];
-	pthread_mutex_init(&pfork, NULL);
+	philo->pfork = malloc(sizeof(pthread_mutex_t *) * philo->philo_num);
+	while (i < (*philo).philo_num)
+	{
+		pthread_mutex_init(philo->pfork, NULL);
+		i++;
+	}
+	i = 0;
 	while (i < philo->philo_num)
 	{
-		philo->philo_count = malloc(sizeof(int));
-		*philo->philo_count = i;
-		if (i == 1)
-		{
-			if (pthread_create(&th[i], NULL, &doing, philo) != 0)
-				return (1);
-		}
-		else
-		{
-			if (pthread_create(&th[i], NULL, &doing, philo) != 0)
-				return (1);
-		}
+		philo_v = (void *)(&philo->philos[i]);
+		if (pthread_create(&th[i], NULL, &life, philo_v) != 0)
+			return (1);
 		i++;
 	}
 	i = 0;
@@ -95,5 +126,5 @@ int main(int argc, char **argv)
 			perror("Failed to join thread\n");
 		i++;
 	}
-	pthread_mutex_destroy(&pfork);
+	pthread_mutex_destroy(philo->pfork);
 }
