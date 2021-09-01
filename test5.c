@@ -18,10 +18,11 @@ int main(int argc, char **argv)
 {
 	pthread_t th[5];
 	int	i;
+	int *a;
 
 	for (i = 0; i < 5; i++)
 	{
-		int *a = malloc(sizeof(int));
+		a = malloc(sizeof(int));
 		*a = i;
 		pthread_create(&th[i], NULL, &routine, a);
 	}

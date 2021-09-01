@@ -11,22 +11,29 @@ int validation(int argc, char **argv)
 	return (0);
 }
 
+unsigned long long get_time(void)
+{
+	struct timeval current_time;
+
+	gettimeofday(&current_time, NULL);
+	return(current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
+}
+
 void	*life(void *arg)
 {
 	int	i;
-	struct timeval current_time;
 	t_list philo;
 
 	philo = *(t_list *)arg;
 	i = 0;
 	if (philo.ID % 2 != 0)
 		usleep(1000);
-	gettimeofday(&current_time, NULL);
+	unsigned long long time = get_time();
 	while (i < philo.num_to_eat)
 	{
-		eating(&philo, current_time.tv_usec);
-		sleeping(&philo, current_time.tv_usec);
-		thinking(&philo, current_time.tv_usec);
+		eating(&philo, time);
+		sleeping(&philo, time);
+		thinking(&philo, time);
 		i++;
 	}
 	return (NULL);

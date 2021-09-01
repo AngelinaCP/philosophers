@@ -3,8 +3,8 @@
 void	list_init(t_all *all, t_list *philos)
 {
 	int	i;
-	i = 0;
 
+	i = 0;
 	while (i < all->philo_num)
 	{
 		philos[i].ID = i + 1;
