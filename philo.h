@@ -9,17 +9,34 @@
 
 typedef struct	s_list
 {
-	int 			philo_num;
+	int	ID;
 	int 			num_to_eat;
-	unsigned long	time_to_die;
-	unsigned long	eating;
-	unsigned long	sleeping;
-	int				*philo_count;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t *left_fork;
 }				t_list;
 
+typedef struct	s_all
+{
+	int 				philo_num;
+	int 				num_to_eat;
+	unsigned long		time_to_die;
+	unsigned long		time_to_eat;
+	unsigned long		time_to_sleep;
+	t_list				*philos;
+	pthread_mutex_t		*pfork;
+	pthread_mutex_t		message;
+	pthread_mutex_t 	sleep;
+	pthread_mutex_t 	death;
 
-int main(int argc, char **argv);
-int	ft_atoi(const char *str);
-int	ft_isdigit(int s);
+}				t_all;
+
+
+int		main(int argc, char **argv);
+int		ft_atoi(const char *str);
+int		ft_isdigit(int s);
+int		eating(t_list *philo, unsigned long sec);
+void	sleeping(t_list *philo, unsigned long sec);
+void 	thinking(t_list *philo, unsigned long sec);
+t_all	*philo_init(char **argv);
 
 #endif
