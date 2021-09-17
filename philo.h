@@ -23,6 +23,7 @@ typedef struct	s_all
 	unsigned long		time_to_die;
 	unsigned long		time_to_eat;
 	unsigned long		time_to_sleep;
+	uint64_t			time;
 	t_list				*philos;
 	pthread_mutex_t		*pfork;
 	pthread_mutex_t		message;
@@ -37,7 +38,8 @@ int		ft_atoi(const char *str);
 int		ft_isdigit(int s);
 int		eating(t_list *philo, unsigned long long sec);
 void	sleeping(t_list *philo, unsigned long long sec);
-void 	thinking(t_list *philo, unsigned long longsec);
+void 	thinking(t_list *philo, unsigned long long longsec);
 t_all	*philo_init(char **argv);
+void	*life(void *arg);
 
 #endif

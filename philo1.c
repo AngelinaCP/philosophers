@@ -29,46 +29,62 @@ void	*life(void *arg)
 	if (philo.ID % 2 != 0)
 		usleep(1000);
 	unsigned long long time = get_time();
-//	while (i < philo.num_to_eat)
-//	{
+	while (i < philo.num_to_eat || i < 3)
+	{
 		eating(&philo, time);
 		sleeping(&philo, time);
 		thinking(&philo, time);
 		i++;
-//	}
+	}
 	return (NULL);
 }
 
-
-
-int main(int argc, char **argv)
+int main (int argc, char **argv)
 {
 	int	i;
-	void *philo_v;
 	t_all *table;
+	t_list *philo;
 
+	i = -1;
 	table = NULL;
 	if (validation(argc, argv))
 		return (1);
 	table = philo_init(argv);
-	table->philos = malloc(sizeof(t_list) * table->philo_num);
-//	table->pfork = malloc(sizeof(pthread_mutex_t) * table->philo_num);
+	table->pfork = malloc(sizeof(pthread_t) * table->philo_num);
+	philo = malloc(sizeof(t_list) * table->philo_num);
 	pthread_t th[table->philo_num];
-	i = 0;
 	table->time = get_time();
+	while (++i < table->philo_num)
+		pthread_mutex_init(&table->pfork[i], NULL);
+	i = - 1;
+	while (++i < table->philo_num)
+	{
+		philo[i].ID = i + 1;
+		philo[i].right_fork = &table->pfork[i];
+		philo[i].left_fork = &table->pfork[i + 1];
+		philo[i].num_to_eat = table->num_to_eat;
+//		pthread_mutex_init(philo[i].left_fork, NULL);
+//		pthread_mutex_init(philo[i].right_fork, NULL);
+	}
+	i = 0;
+
 	while (i < table->philo_num)
 	{
-		philo_v = (void *)(&table->philos[i]);
-		if (pthread_create(&th[i], NULL, &life, philo_v) != 0)
+		if (pthread_create(&th[i], NULL, &life, &philo[i]) != 0)
 			return (1);
 		i++;
 	}
 	i = 0;
+	while (i < table->philo_num)
+	{
+		if (pthread_join(th[i], NULL) != 0)
+			perror("Failed to join thread\n");
+		i++;
+	}
 //	while (i < table->philo_num)
 //	{
-//		if (pthread_join(th[i], NULL) != 0)
-//			perror("Failed to join thread\n");
+//		if (pthread_detach(th[i]) != 0)
+//			return (1);
 //		i++;
 //	}
-	pthread_mutex_destroy(table->pfork);
 }

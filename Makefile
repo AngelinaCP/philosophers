@@ -8,7 +8,7 @@ HEADER  = philo.h
 
 RM   = rm -f
 
-SRCS	=	philo.c utils.c actions.c init.c
+SRCS	=	utils.c actions.c init.c philo1.c
 
 OBJS   = ${SRCS:.c=.o}
 
