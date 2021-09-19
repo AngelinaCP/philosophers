@@ -31,7 +31,7 @@ void	*life(void *arg)
 	unsigned long long time = get_time();
 //	while (i < philo.num_to_eat)
 //	{
-		eating(&philo, time);
+		eabting(&philo, time);
 		sleeping(&philo, time);
 		thinking(&philo, time);
 		i++;
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 //	table->pfork = malloc(sizeof(pthread_mutex_t) * table->philo_num);
 	pthread_t th[table->philo_num];
 	i = 0;
-	table->time = get_time();
+	table->start_time = get_time();
 	while (i < table->philo_num)
 	{
 		philo_v = (void *)(&table->philos[i]);

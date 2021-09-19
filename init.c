@@ -11,9 +11,9 @@ t_list	*list_init(t_all *all, t_list *philos)
 		philos[i].right_fork = &all->pfork[i];
 		philos[i].left_fork = &all->pfork[i + 1];
 		philos[i].num_to_eat = all->num_to_eat;
-		pthread_mutex_init(philos[i].left_fork, NULL);
-		pthread_mutex_init(philos[i].right_fork, NULL);
-		printf("fg: %d\n", philos[i].ID);
+//		pthread_mutex_init(philos[i].left_fork, NULL);
+//		pthread_mutex_init(philos[i].right_fork, NULL);
+//		printf("fg: %d\n", philos[i].ID);
 		i++;
 	}
 	return (philos);
